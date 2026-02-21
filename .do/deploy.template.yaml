@@ -1,0 +1,13 @@
+spec:
+  name: portfolio
+  static_sites:
+    - name: portfolio
+      git:
+        branch: master
+        repo_clone_url: https://github.com/remoet-labs/starter-template.git
+      build_command: yarn install && yarn build
+      output_dir: .next
+      envs:
+        - key: REMOET_API_KEY
+          scope: BUILD_TIME
+          type: SECRET
