@@ -8,6 +8,10 @@ A minimal, static portfolio site powered by the [remoet.dev](https://remoet.dev)
 
 [![Deploy to DO](https://www.deploytodo.com/do-btn-blue.svg)](https://cloud.digitalocean.com/apps/new?repo=https://github.com/remoet-labs/starter-template/tree/master&refcode=dd547637f1ea)
 
+## Preview
+
+![Preview](https://github.com/remoet-labs/starter-template/blob/master/previews/preview.jpg?raw=true)
+
 ## Features
 
 - Server-side data fetching (API key never exposed to the client)
