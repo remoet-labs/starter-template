@@ -11,6 +11,13 @@ export function Footer() {
         >
           remoet.dev
         </a>
+        {" · "}
+        <a
+          href="/llms.txt"
+          className="text-accent hover:text-accent-hover transition-colors"
+        >
+          llms.txt
+        </a>
       </p>
     </footer>
   );
