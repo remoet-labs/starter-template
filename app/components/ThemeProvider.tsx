@@ -31,10 +31,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const stored = localStorage.getItem("theme") as Theme | null;
-    const initial = stored || "light";
-    setTheme(initial);
-    document.documentElement.setAttribute("data-theme", initial);
+    const current = (document.documentElement.getAttribute("data-theme") as Theme) || "light";
+    setTheme(current);
     setMounted(true);
   }, []);
 

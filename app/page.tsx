@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { fetchPortfolioData } from "@/lib/api";
+import { buildPersonJsonLd, safeJsonLdStringify } from "@/lib/jsonld";
 import { Hero } from "./components/Hero";
 import { Experience } from "./components/Experience";
 import { Projects } from "./components/Projects";
@@ -101,11 +102,17 @@ export default async function Home() {
     );
   }
 
+  const jsonLd = buildPersonJsonLd(data);
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: safeJsonLdStringify(jsonLd) }}
+      />
       <main className="max-w-3xl mx-auto px-6">
         <Hero profile={data.profile} email={data.email} />
-        <Experience jobs={data.jobs} />
+        <Experience jobs={data.jobs ?? []} />
         <Projects projects={data.projects} />
         <Education education={data.education} />
       </main>

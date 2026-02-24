@@ -10,7 +10,7 @@ import {
 } from "react-icons/fa";
 import { IconType } from "react-icons";
 import { UserProfile } from "@/lib/types";
-import { socialLinkDefs } from "@/lib/social";
+import { getSocialLinks, type SocialLink } from "@/lib/social";
 import { SocialIcon } from "./ui/SocialIcon";
 import { ThemeToggle } from "./ThemeToggle";
 
@@ -19,7 +19,7 @@ interface HeroProps {
   email: string;
 }
 
-const iconMap: Record<string, IconType> = {
+const iconMap: Record<SocialLink["key"], IconType> = {
   githubUrl: FaGithub,
   linkedinUrl: FaLinkedin,
   twitterUrl: FaTwitter,
@@ -33,6 +33,7 @@ export function Hero({ profile, email }: HeroProps) {
   const summary = profile.summary?.value;
   const location = profile.location?.value;
   const avatarUrl = profile.avatarUrl?.value;
+  const socialLinks = getSocialLinks(profile);
 
   return (
     <section className="pt-12 pb-12">
@@ -69,26 +70,14 @@ export function Hero({ profile, email }: HeroProps) {
           )}
 
           <div className="mt-6 flex items-center gap-4">
-            {socialLinkDefs.map(({ key, label }) => {
-              const field = profile[key];
-              const icon = iconMap[key];
-              if (
-                !icon ||
-                typeof field !== "object" ||
-                !field ||
-                !("value" in field) ||
-                !field.value
-              )
-                return null;
-              return (
-                <SocialIcon
-                  key={key}
-                  href={field.value}
-                  label={label}
-                  icon={icon}
-                />
-              );
-            })}
+            {socialLinks.map(({ key, label, url }) => (
+              <SocialIcon
+                key={key}
+                href={url}
+                label={label}
+                icon={iconMap[key]}
+              />
+            ))}
           </div>
         </div>
       </div>

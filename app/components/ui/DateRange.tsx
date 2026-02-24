@@ -1,4 +1,4 @@
-import { formatDate } from "@/lib/dates";
+import { formatDateRange as format } from "@/lib/dates";
 
 interface DateRangeProps {
   startDate: string | null;
@@ -7,12 +7,8 @@ interface DateRangeProps {
 }
 
 export function DateRange({ startDate, endDate, isCurrent }: DateRangeProps) {
-  if (!startDate) return null;
+  const range = format(startDate, endDate, isCurrent);
+  if (!range) return null;
 
-  return (
-    <span className="text-sm text-muted">
-      {formatDate(startDate)} &mdash;{" "}
-      {isCurrent ? "Present" : endDate ? formatDate(endDate) : "Present"}
-    </span>
-  );
+  return <span className="text-sm text-muted">{range}</span>;
 }

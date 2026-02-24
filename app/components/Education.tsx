@@ -1,4 +1,5 @@
 import { UserEducation } from "@/lib/types";
+import { formatStudyLevel } from "@/lib/education";
 import { Section } from "./ui/Section";
 import { ShowMore } from "./ui/ShowMore";
 import { DateRange } from "./ui/DateRange";
@@ -8,16 +9,6 @@ import { ExternalLink } from "./ui/ExternalLink";
 interface EducationProps {
   education: UserEducation[];
 }
-
-const STUDY_LEVEL_LABELS: Record<string, string> = {
-  HIGH_SCHOOL: "High School",
-  ASSOCIATE: "Associate Degree",
-  BACHELOR: "Bachelor's Degree",
-  MASTER: "Master's Degree",
-  DOCTORATE: "Doctorate",
-  BOOTCAMP: "Bootcamp",
-  OTHER: "Other",
-};
 
 function EducationItem({ edu }: { edu: UserEducation }) {
   return (
@@ -40,12 +31,7 @@ function EducationItem({ edu }: { edu: UserEducation }) {
       <div className="mt-1 flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
         {(edu.studyLevel || edu.fieldOfStudy) && (
           <span className="text-sm text-muted">
-            {[
-              edu.studyLevel
-                ? STUDY_LEVEL_LABELS[edu.studyLevel] || edu.studyLevel
-                : null,
-              edu.fieldOfStudy,
-            ]
+            {[formatStudyLevel(edu.studyLevel), edu.fieldOfStudy]
               .filter(Boolean)
               .join(" in ")}
           </span>

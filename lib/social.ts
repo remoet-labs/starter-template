@@ -1,11 +1,14 @@
-import type { UserProfile } from "./types";
+import type { UserProfile, DataField } from "./types";
 
-export interface SocialLinkDef {
-  key: keyof UserProfile;
+type SocialUrlKey = "githubUrl" | "linkedinUrl" | "twitterUrl" | "youtubeUrl" | "facebookUrl" | "url";
+
+export interface SocialLink {
+  key: SocialUrlKey;
   label: string;
+  url: string;
 }
 
-export const socialLinkDefs: SocialLinkDef[] = [
+const defs: { key: SocialUrlKey; label: string }[] = [
   { key: "githubUrl", label: "GitHub" },
   { key: "linkedinUrl", label: "LinkedIn" },
   { key: "twitterUrl", label: "Twitter" },
@@ -14,21 +17,13 @@ export const socialLinkDefs: SocialLinkDef[] = [
   { key: "url", label: "Website" },
 ];
 
-export function getPublicSocialLinks(
-  profile: UserProfile
-): { label: string; url: string }[] {
-  const links: { label: string; url: string }[] = [];
+export function getSocialLinks(profile: UserProfile): SocialLink[] {
+  const links: SocialLink[] = [];
 
-  for (const { key, label } of socialLinkDefs) {
-    const field = profile[key];
-    if (
-      typeof field === "object" &&
-      field !== null &&
-      "value" in field &&
-      field.value &&
-      field.isPublic
-    ) {
-      links.push({ label, url: field.value });
+  for (const { key, label } of defs) {
+    const field: DataField = profile[key];
+    if (field.value) {
+      links.push({ key, label, url: field.value });
     }
   }
 

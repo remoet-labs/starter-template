@@ -28,6 +28,11 @@ export const fetchPortfolioData = cache(
       return null;
     }
 
-    return res.json();
+    try {
+      return await res.json();
+    } catch (e) {
+      console.error("Failed to parse portfolio data:", e);
+      return null;
+    }
   }
 );

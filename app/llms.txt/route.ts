@@ -6,23 +6,20 @@ import {
   UserEducation,
 } from "@/lib/types";
 import { formatDateRange } from "@/lib/dates";
-import { getPublicSocialLinks } from "@/lib/social";
+import { formatStudyLevel } from "@/lib/education";
+import { getSocialLinks } from "@/lib/social";
 
 function buildProfileSection(data: PortfolioData): string {
   const name = data.profile.name?.value || "Developer";
   const lines: string[] = [`# ${name}`];
 
-  const summary = data.profile.summary?.value;
-  if (summary) {
-    lines.push("", `> ${summary}`);
+  if (data.profile.summary?.value) {
+    lines.push("", `> ${data.profile.summary.value}`);
   }
 
   const details: string[] = [];
-  const location = data.profile.location?.value;
-  if (location) details.push(`Location: ${location}`);
-  if (data.email) details.push(`Email: ${data.email}`);
-  const url = data.profile.url?.value;
-  if (url) details.push(`Website: ${url}`);
+  if (data.profile.location?.value) details.push(`Location: ${data.profile.location.value}`);
+  if (data.profile.url?.value) details.push(`Website: ${data.profile.url.value}`);
 
   if (details.length > 0) {
     lines.push("", details.join("  \n"));
@@ -32,11 +29,10 @@ function buildProfileSection(data: PortfolioData): string {
 }
 
 function buildExperienceSection(jobs: UserJob[]): string | null {
-  const visible = jobs?.filter((j) => j.isPublic);
-  if (!visible || visible.length === 0) return null;
+  if (jobs.length === 0) return null;
 
   const lines = ["## Experience", ""];
-  for (const job of visible) {
+  for (const job of jobs) {
     const range = formatDateRange(job.startDate, job.endDate, job.isCurrent);
     const remote = job.isRemote ? " (Remote)" : "";
     let entry = `- **${job.title} at ${job.companyName}**${remote}`;
@@ -74,9 +70,9 @@ function buildEducationSection(education: UserEducation[]): string | null {
   const lines = ["## Education", ""];
   for (const e of education) {
     const range = formatDateRange(e.startDate, e.endDate, e.isCurrent);
-    const level = e.studyLevel && e.studyLevel !== "OTHER" ? `${e.studyLevel} ` : "";
+    const level = formatStudyLevel(e.studyLevel);
     const field = e.fieldOfStudy ? `in ${e.fieldOfStudy} ` : "";
-    let entry = `- **${level}${field}at ${e.institution}**`;
+    let entry = `- **${level ? `${level} ` : ""}${field}at ${e.institution}**`;
     if (range) entry += ` (${range})`;
     if (e.description) entry += `: ${e.description}`;
     lines.push(entry);
@@ -85,7 +81,7 @@ function buildEducationSection(education: UserEducation[]): string | null {
 }
 
 function buildLinksSection(profile: PortfolioData["profile"]): string | null {
-  const links = getPublicSocialLinks(profile);
+  const links = getSocialLinks(profile);
   if (links.length === 0) return null;
 
   const lines = ["## Links", ""];
@@ -96,9 +92,10 @@ function buildLinksSection(profile: PortfolioData["profile"]): string | null {
 }
 
 function generateLlmsTxt(data: PortfolioData): string {
+  const jobs = data.jobs ?? [];
   const sections = [
     buildProfileSection(data),
-    buildExperienceSection(data.jobs),
+    buildExperienceSection(jobs),
     buildProjectsSection(data.projects),
     buildEducationSection(data.education),
     buildLinksSection(data.profile),
