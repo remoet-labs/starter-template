@@ -6,6 +6,7 @@ import {
   useEffect,
   useState,
   useCallback,
+  useSyncExternalStore,
 } from "react";
 
 type Theme = "light" | "dark";
@@ -26,23 +27,25 @@ export function useTheme() {
   return useContext(ThemeContext);
 }
 
+function getStoredTheme(): Theme {
+  if (typeof window === "undefined") return "light";
+  return (localStorage.getItem("theme") as Theme) || "light";
+}
+
+const noop = () => () => {};
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>("light");
-  const [mounted, setMounted] = useState(false);
+  const [theme, setTheme] = useState<Theme>(getStoredTheme);
+  const mounted = useSyncExternalStore(noop, () => true, () => false);
 
   useEffect(() => {
-    const stored = localStorage.getItem("theme") as Theme | null;
-    const initial = stored || "light";
-    setTheme(initial);
-    document.documentElement.setAttribute("data-theme", initial);
-    setMounted(true);
-  }, []);
+    document.documentElement.setAttribute("data-theme", theme);
+  }, [theme]);
 
   const toggleTheme = useCallback(() => {
     setTheme((prev) => {
       const next = prev === "light" ? "dark" : "light";
       localStorage.setItem("theme", next);
-      document.documentElement.setAttribute("data-theme", next);
       return next;
     });
   }, []);
